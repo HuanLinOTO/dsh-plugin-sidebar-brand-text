@@ -1,0 +1,18 @@
+# Insert dsh-plugin-sidebar-brand-text: replaces the sidebar's top-left
+# brand-name slot (the shell's "DSH Local Build" label + 7-character
+# DSH_CLIENT_COMMIT_HASH badge fallback) with configurable text.
+#
+# The plugin registers the `sidebar.brand.name` slot via declaration-aware
+# `slots.inject()`, so it activates whether it loads before or after
+# ui-sidebar. The mark slot (`sidebar.brand.mark`) is untouched: the fish
+# logo stays unless another plugin (e.g. ui-brand-official) replaces it.
+#
+# Config:
+#   name      — brand name text (default "DSH Local Build", the shell fallback)
+#   revision  — revision badge text; empty string hides the badge (default "")
+- insert:
+    - id: sidebar-brand-text
+      name: '@huanlin/dsh-plugin-sidebar-brand-text'
+      config:
+        name: 'DSH Local Build'
+        revision: ''

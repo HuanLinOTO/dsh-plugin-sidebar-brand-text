@@ -1,0 +1,42 @@
+/**
+ * Schemastery schema + resolver for the `sidebar-brand-text` config.
+ *
+ * The composition `Config` (cordis.patch.yml seed) and the settings namespace
+ * schema share the same shape: `name` (brand text) + `revision` (badge text,
+ * empty = hidden). `resolveConfig` applies defaults so a partially-populated
+ * entry or settings layer still yields a complete value.
+ *
+ * @module @huanlin/dsh-plugin-sidebar-brand-text/config
+ */
+import z from '@deepseek-ai/schemastery'
+import type { BrandTextConfig } from './types.ts'
+
+/** Schemastery schema for the composition entry and the settings namespace. */
+export const Config = z.object({
+  name: z.string().default('DSH Local Build')
+    .description('Brand name text shown in the sidebar next to the logo.'),
+  revision: z.string().default('')
+    .description('Revision badge text shown beside the brand name. Empty string hides the badge.'),
+}) as unknown as z<BrandTextConfig>
+
+/**
+ * Resolve a raw config object into a complete {@link BrandTextConfig}.
+ *
+ * Unknown keys are dropped; missing or wrong-typed keys fall back to
+ * the defaults. This runs on every gateway read so the client always
+ * sees a well-formed value.
+ * @param config - raw config (entry source or settings layer).
+ * @returns the resolved config with defaults applied.
+ */
+export function resolveConfig(config: Record<string, unknown> = {}): BrandTextConfig {
+  return {
+    name: typeof config.name === 'string' ? config.name : DEFAULT.name,
+    revision: typeof config.revision === 'string' ? config.revision : DEFAULT.revision,
+  }
+}
+
+/** Defaults used when no config arrives (defensive only). */
+const DEFAULT: BrandTextConfig = {
+  name: 'DSH Local Build',
+  revision: '',
+}
