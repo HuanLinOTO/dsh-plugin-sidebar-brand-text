@@ -113,11 +113,11 @@ describe('client apply', () => {
     expect(injectFace.useSnapshot).toBeDefined()
   })
 
-  it('installs the locale dictionary and stylesheet effects', () => {
+  it('installs the locale dictionary, stylesheet, and title-writer effects', () => {
     const { ctx, effects } = stubCtx()
     apply(ctx as unknown as ClientContext)
 
-    expect(effects.length).toBe(2)
+    expect(effects.length).toBe(3)
     effects[1]!()
     const style = document.head.querySelector('style[data-sidebar-brand-text-style]')
     expect(style).not.toBeNull()

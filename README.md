@@ -4,16 +4,17 @@
 
 # dsh-plugin-sidebar-brand-text
 
-替换侧边栏左上角的品牌名与构建徽标文案。默认情况下，DSH 侧边栏在左上角显示 `DSH Local Build` 文字和 7 位 commit hash 徽标（构建期 `DSH_CLIENT_COMMIT_HASH`）；本插件通过注册 `sidebar.brand.name` slot 占位者替换这两段文案，并在 WebUI 设置 → 插件配置页提供一张可展开的配置卡。
+替换侧边栏左上角的品牌名、构建徽标文案，以及浏览器标签页标题（`document.title`）。默认情况下，DSH 侧边栏在左上角显示 `DSH Local Build` 文字和 7 位 commit hash 徽标（构建期 `DSH_CLIENT_COMMIT_HASH`），浏览器标签页标题格式为 `<会话标题> — DSH Local Build`；本插件通过注册 `sidebar.brand.name` slot 占位者替换侧边栏文案，并订阅 `sessions.list` 覆写 `document.title` 让浏览器标签页也使用配置的品牌名，同时在 WebUI 设置 → 插件配置页提供一张可展开的配置卡。
 
 ```
 替换前：                              替换后（name="My Build", revision="v1.0"）：
 ┌─────────────────────────┐          ┌─────────────────────────┐
 │ 🐟 DSH Local Build ▎141eb6f │       │ 🐟 My Build ▎v1.0         │
 └─────────────────────────┘          └─────────────────────────┘
+浏览器标签：会话 — DSH Local Build    浏览器标签：会话 — My Build
 ```
 
-mark（鱼形 logo）不动——本插件只替换 name 行的文字 + 徽标。若需同时替换 logo，另行安装 `@deepseek-ai/dsh-client-ui-brand-official` 或其他占用 `sidebar.brand.mark` 的插件。
+mark（鱼形 logo）不动——本插件只替换 name 行的文字 + 徽标 + 浏览器标签页标题。若需同时替换 logo，另行安装 `@deepseek-ai/dsh-client-ui-brand-official` 或其他占用 `sidebar.brand.mark` 的插件。
 
 ## 工作原理
 
@@ -31,6 +32,12 @@ mark（鱼形 logo）不动——本插件只替换 name 行的文字 + 徽标�
 ### 实时刷新
 
 BrandText 组件和 BrandTextCard 共享同一个 `BrandTextSettingsController`（内含 `createSnapshotStore`）。卡片的 Save 写入后，store 更新，BrandText 通过 `useSyncExternalStore` 自动重新渲染——无需 DOM 事件、无需 RPC 重取。
+
+### 浏览器标签页标题（document.title）
+
+DSH 的 `document.title` 由 `packages/client/ui-renderer/src/client/DocumentTitle.tsx` 的 `useEffect` 写入，格式 `<会话标题> — <productTitle>`，其中 `productTitle` 是**构建期** `process.env.DSH_CLIENT_TITLE` 字面量（fallback `'DSH Local Build'`），不是 slot、不是运行时 config——`ui-brand-official/README.md` 明确记载："The browser title is independent — `DSH_CLIENT_TITLE` selects title text at build time rather than through a UI slot."
+
+本插件的 `titleWriter` 订阅**同一个** `sessions.list` feed 和共享的 `BrandTextSettingsController` store，在 `DocumentTitle` 的 `useEffect` 写完之后用 `queueMicrotask` 延迟覆写 `document.title` 为 `<会话标题> — <配置的品牌名>`，并用 `MutationObserver` 兜底防止 React 18 concurrent 重渲染覆盖。卸载插件后所有订阅和 observer 被清理，`DocumentTitle` 的 cleanup 恢复构建期标题。
 
 ## 配置
 
@@ -105,14 +112,17 @@ dsh plugin --profile web add "@huanlin/dsh-plugin-sidebar-brand-text"           
 - 浏览器验证：
   - 左上角品牌行显示配置的 `name` 文案；
   - `revision` 非空时右侧显示徽标，为空时无徽标；
+  - 浏览器标签页标题为 `<会话标题> — <配置的品牌名>`，切换会话实时更新；
+  - 无会话时浏览器标签页仅显示配置的品牌名；
+  - 卡片修改保存后侧边栏和浏览器标签页实时生效，无需重启；
   - mark（鱼形 logo）保持原样；
-  - 设置卡修改保存后侧边栏实时生效，无需重启；
-  - 卸载插件后恢复 `DSH Local Build` + commit hash 默认 fallback。
+  - 卸载插件后恢复 `DSH Local Build` + commit hash 默认 fallback（侧边栏 + 浏览器标签页）。
 
 ## 边界行为
 
 - mark slot 不受影响：本插件只注册 `sidebar.brand.name`，不碰 `sidebar.brand.mark`。
-- 折叠态：侧边栏折叠到 56px 轨道时只显示 mark，不渲染 name slot，因此本插件在折叠态不可见。展开侧边栏后可见配置的文案。
+- 折叠态：侧边栏折叠到 56px 轨道时只显示 mark，不渲染 name slot，因此本插件在折叠态不可见。展开侧边栏后可见配置的文案。但浏览器标签页标题不受折叠态影响，始终生效。
 - `revision` 为空白字符时仍渲染徽标（非空字符串判定）；需要隐藏徽标请设为空字符串。
-- 配置变更实时生效：卡片 Save 后 `BrandTextSettingsController.store` 更新，BrandText 组件通过 `useSyncExternalStore` 自动重新渲染。
-- HTTP 路由不可达时 BrandText 回退到默认配置（`DSH Local Build`），卡片显示「配置通道不可用」提示。
+- 配置变更实时生效：卡片 Save 后 `BrandTextSettingsController.store` 更新，BrandText 组件和 titleWriter 通过 `useSyncExternalStore` / `store.subscribe` 自动同步——侧边栏文案和浏览器标签页标题同时更新。
+- HTTP 路由不可达时 BrandText 和 titleWriter 回退到默认配置（`DSH Local Build`），卡片显示「配置通道不可用」提示。
+- titleWriter 与 DSH 内置 `DocumentTitle` 组件存在竞争：`DocumentTitle` 的 `useEffect` 会在 sessions 变化后覆写 `document.title` 回构建期值，本插件用 `queueMicrotask` 延迟到 useEffect 之后执行 + `MutationObserver` 兜底解决。极少数情况下（React 18 concurrent 模式的批次间隙）可能有 1 帧闪烁。

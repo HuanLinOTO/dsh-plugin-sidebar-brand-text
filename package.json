@@ -1,6 +1,6 @@
 {
   "name": "@huanlin/dsh-plugin-sidebar-brand-text",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publishConfig": { "access": "public" },
   "keywords": ["dsh-plugin"],
   "description": "替换侧边栏左上角的品牌名与构建徽标文案（默认 DSH Local Build + commit hash），经 WebUI 插件配置页卡片实时配置。 | Replace the sidebar's top-left brand name and build-revision badge text (defaults to DSH Local Build + commit hash) via a live settings card in the Plugin Config page.",

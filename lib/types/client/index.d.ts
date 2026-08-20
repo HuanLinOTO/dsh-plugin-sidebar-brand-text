@@ -25,7 +25,7 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
         'dsh-plugin-sidebar-brand-text': BrandTextKey;
     }
 }
-/** Required services: slots + locale. */
+/** Required services: slots + locale + sessions (sessions drives the title writer). */
 export declare const inject: string[];
 /**
  * Client plugin body: register the brand-name slot occupant, the settings

@@ -27,6 +27,7 @@ import { BrandText, type BrandTextInjected } from './BrandText.tsx'
 import { BrandTextCard, type BrandTextCardInjected } from './BrandTextCard.tsx'
 import { BrandTextSettingsController } from './controller.ts'
 import { bindSnapshotSelector } from './bindSnapshotSelector.ts'
+import { startTitleWriter } from './titleWriter.ts'
 import { en, NS, zh, type BrandTextKey } from './locales.ts'
 import { installStyles } from './styles.ts'
 
@@ -37,8 +38,8 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
   }
 }
 
-/** Required services: slots + locale. */
-export const inject = ['slots', 'locale']
+/** Required services: slots + locale + sessions (sessions drives the title writer). */
+export const inject = ['slots', 'locale', 'sessions']
 
 /**
  * Client plugin body: register the brand-name slot occupant, the settings
@@ -56,6 +57,8 @@ export function apply(ctx: ClientContext): void {
   const useSnapshot = bindSnapshotSelector(controller.store)
 
   void controller.load()
+
+  ctx.effect(() => startTitleWriter(ctx.sessions, controller.store), 'sidebar-brand-text: document.title override')
 
   const brandInjected = (): BrandTextInjected => ({ useSnapshot })
   ctx.slots.inject('sidebar.brand.name', () =>
