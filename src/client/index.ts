@@ -57,13 +57,23 @@ export const inject = ['slots', 'locale', 'sessions']
  */
 export function apply(ctx: ClientContext): void {
   ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'sidebar-brand-text: dictionaries')
-  const betterLocale = ctx.get('betterLocale') as BetterLocaleStoreLike | undefined
-  if (betterLocale) {
-    ctx.effect(
-      () => betterLocale.register(NS, dicts),
-      'dsh-plugin-sidebar-brand-text: better-locale override dicts',
-    )
-  }
+  ctx.effect(() => {
+    let dispose: (() => void) | undefined
+    const sync = (): void => {
+      dispose?.()
+      dispose = undefined
+      const store = ctx.get('betterLocale') as BetterLocaleStoreLike | undefined
+      if (store !== undefined) {
+        dispose = store.register(NS, dicts)
+      }
+    }
+    sync()
+    const unsubscribe = ctx.locale.subscribe(sync)
+    return () => {
+      unsubscribe()
+      dispose?.()
+    }
+  }, 'dsh-plugin-sidebar-brand-text: better-locale override dicts')
   ctx.effect(installStyles, 'sidebar-brand-text: styles')
 
   const controller = new BrandTextSettingsController()
