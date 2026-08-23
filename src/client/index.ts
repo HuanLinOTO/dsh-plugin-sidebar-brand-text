@@ -23,6 +23,7 @@ import type {} from '@deepseek-ai/dsh-client-locale/client'
 import type {} from '@deepseek-ai/dsh-client-ui-slots'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
 import type {} from '@deepseek-ai/dsh-client-ui-settings-plugins/client'
+import { dicts } from './dictionaries.ts'
 import { BrandText, type BrandTextInjected } from './BrandText.tsx'
 import { BrandTextCard, type BrandTextCardInjected } from './BrandTextCard.tsx'
 import { BrandTextSettingsController } from './controller.ts'
@@ -30,6 +31,11 @@ import { bindSnapshotSelector } from './bindSnapshotSelector.ts'
 import { startTitleWriter } from './titleWriter.ts'
 import { en, NS, zh, type BrandTextKey } from './locales.ts'
 import { installStyles } from './styles.ts'
+
+/** Structural view of the `ctx.betterLocale` service (published by dsh-plugin-better-locale). */
+interface BetterLocaleStoreLike {
+  register(ns: string, dicts: Record<string, Record<string, string>>): () => void
+}
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
@@ -51,6 +57,13 @@ export const inject = ['slots', 'locale', 'sessions']
  */
 export function apply(ctx: ClientContext): void {
   ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'sidebar-brand-text: dictionaries')
+  const betterLocale = ctx.get('betterLocale') as BetterLocaleStoreLike | undefined
+  if (betterLocale) {
+    ctx.effect(
+      () => betterLocale.register(NS, dicts),
+      'dsh-plugin-sidebar-brand-text: better-locale override dicts',
+    )
+  }
   ctx.effect(installStyles, 'sidebar-brand-text: styles')
 
   const controller = new BrandTextSettingsController()

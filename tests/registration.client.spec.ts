@@ -27,13 +27,14 @@ interface StubCtx {
   injectCalls: Array<{ name: string, factory: () => StubSlot | Generator<StubSlot> }>
 }
 
-function stubCtx(): StubCtx {
+function stubCtx(betterLocale: unknown = undefined): StubCtx {
   const effects: Array<() => unknown> = []
   const registrations: StubSlot[] = []
   const injectCalls: Array<{ name: string, factory: () => StubSlot | Generator<StubSlot> }> = []
   const dicts = new Map<string, Record<string, string>>()
   const ctx = {
     effect: (fn: () => unknown, _reason: string) => { effects.push(fn) },
+    get: (_name: string) => betterLocale,
     locale: {
       register: (ns: string, dict: Record<string, string>) => { dicts.set(ns, dict) },
       bind: (ns: string) => (key: string) => dicts.get(ns)?.[key] ?? key,
@@ -121,6 +122,31 @@ describe('client apply', () => {
     effects[1]!()
     const style = document.head.querySelector('style[data-sidebar-brand-text-style]')
     expect(style).not.toBeNull()
+  })
+
+  it('registers the better-locale override dicts when the store is present', () => {
+    const registered: Array<{ ns: string, dicts: unknown }> = []
+    const betterLocale = {
+      register: (ns: string, dicts: unknown) => {
+        registered.push({ ns, dicts })
+        return () => {}
+      },
+    }
+    const { ctx, effects } = stubCtx(betterLocale)
+    apply(ctx as unknown as ClientContext)
+
+    expect(effects.length).toBe(4)
+    effects[1]!()
+    expect(registered.length).toBe(1)
+    expect(registered[0]!.ns).toBe('dsh-plugin-sidebar-brand-text')
+    expect(Object.keys(registered[0]!.dicts as Record<string, unknown>)).toHaveLength(19)
+  })
+
+  it('skips the better-locale registration when the store is absent', () => {
+    const { ctx, effects } = stubCtx()
+    apply(ctx as unknown as ClientContext)
+
+    expect(effects.length).toBe(3)
   })
 
   it('effect disposer removes the stylesheet', () => {
