@@ -3,7 +3,7 @@
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, describe, expect, it, beforeEach } from 'vitest'
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
+import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
 import { BrandText } from '../src/client/BrandText.tsx'
 import type { BrandTextState } from '../src/client/controller.ts'
 import { DEFAULT_BRAND_TEXT_CONFIG } from '../src/types.ts'

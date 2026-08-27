@@ -12,7 +12,7 @@
  *
  * @module @huanlin/dsh-plugin-sidebar-brand-text/client/controller
  */
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
+import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
 import { DEFAULT_BRAND_TEXT_CONFIG, type BrandTextConfig } from '../types.ts'
 
 /** The controller's snapshot state. */

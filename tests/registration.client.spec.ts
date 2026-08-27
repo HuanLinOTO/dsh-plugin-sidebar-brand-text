@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import { describe, expect, it, beforeEach } from 'vitest'
-import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
+import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import { apply } from '../src/client/index.ts'
 
 interface StubSlot {
@@ -38,6 +38,7 @@ function stubCtx(betterLocale: unknown = undefined): StubCtx {
     locale: {
       register: (ns: string, dict: Record<string, string>) => { dicts.set(ns, dict) },
       bind: (ns: string) => (key: string) => dicts.get(ns)?.[key] ?? key,
+      subscribe: (_fn: () => void) => () => {},
     },
     slots: {
       inject: (name: string, factory: () => StubSlot | Generator<StubSlot>) => {
@@ -114,12 +115,12 @@ describe('client apply', () => {
     expect(injectFace.useSnapshot).toBeDefined()
   })
 
-  it('installs the locale dictionary, stylesheet, and title-writer effects', () => {
+  it('installs the locale dictionary, better-locale sync, stylesheet, and title-writer effects', () => {
     const { ctx, effects } = stubCtx()
     apply(ctx as unknown as ClientContext)
 
-    expect(effects.length).toBe(3)
-    effects[1]!()
+    expect(effects.length).toBe(4)
+    effects[2]!()
     const style = document.head.querySelector('style[data-sidebar-brand-text-style]')
     expect(style).not.toBeNull()
   })
@@ -146,14 +147,17 @@ describe('client apply', () => {
     const { ctx, effects } = stubCtx()
     apply(ctx as unknown as ClientContext)
 
-    expect(effects.length).toBe(3)
+    // The sync effect is registered unconditionally (activation-order-safe,
+    // 0.4.2); with the store absent its body is a no-op.
+    expect(effects.length).toBe(4)
+    expect(() => effects[1]!()).not.toThrow()
   })
 
   it('effect disposer removes the stylesheet', () => {
     const { ctx, effects } = stubCtx()
     apply(ctx as unknown as ClientContext)
 
-    const dispose = effects[1]!() as () => void
+    const dispose = effects[2]!() as () => void
     const style = document.head.querySelector('style[data-sidebar-brand-text-style]')
     expect(style).not.toBeNull()
     dispose()

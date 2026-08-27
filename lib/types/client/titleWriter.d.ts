@@ -1,5 +1,5 @@
 import type { BrandTextState } from './controller.ts';
-import type { SnapshotStore } from '@deepseek-ai/dsh-client-runtime/client';
+import type { SnapshotStore } from '@deepseek-ai/dsh-client-store';
 /** Minimal face of `sessions.list` we depend on (ISessions.list slice). */
 interface SessionListSnapshot {
     current: string | undefined;

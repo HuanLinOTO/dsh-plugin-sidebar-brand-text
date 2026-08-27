@@ -69,12 +69,12 @@ DSH 的 `document.title` 由 `packages/client/ui-renderer/src/client/DocumentTit
 
 ## 开发
 
-前置：`@deepseek-ai/*` devDeps 从 npm registry 安装（`0.1.0-rc.8`），类型完整可独立 typecheck。
+前置：本插件适配 DSH `v0.1.2-alpha.1`。alpha 版本未发 npm，`@deepseek-ai/dsh-*` 只作 peerDependencies 声明（`^0.1.2-alpha.1`，不安装）；dev 期类型用 tsconfig `paths` 指向本地 DSH 源码树（`~/.dsh/source/current`，需已 `pnpm run build`），并在 `node_modules/@deepseek-ai/` 下建 junction 指向对应包目录（同 `dsh-plugin-interpreters` 的做法）。仅 `@deepseek-ai/cordis`（`^4.0.1`）与 `@deepseek-ai/schemastery`（`^3.18.1`）已发 npm、保留在 devDependencies。
 
 ```sh
-pnpm install            # 安装 registry 依赖
-pnpm run typecheck      # tsc --noEmit
-pnpm test               # vitest：注册形态 + 控制器 + 组件渲染
+pnpm install            # 安装 registry 依赖（@deepseek-ai/dsh-* peers 不拉取）
+pnpm run typecheck      # tsc --noEmit（类型经 tsconfig paths 解析到 DSH 源码树）
+pnpm test               # vitest：注册形态 + 控制器 + 组件渲染（dsh-client-store 用本地测试替身）
 pnpm run build          # tsdown + tsc → lib/index.js、lib/invariant.js、lib/client.js、lib/types/
 ```
 

@@ -26,21 +26,13 @@ const HOST_EXTERNALS = [
   '@deepseek-ai/dsh-invariants',
 ]
 
-/** DSH platform modules that stay external in the browser bundle. */
+/** DSH platform modules that stay external in the browser bundle (loader module table = PLATFORM_MODULES seed). */
 const CLIENT_EXTERNALS = [
   'react',
   'react/jsx-runtime',
   'react-dom',
   '@deepseek-ai/cordis',
-  '@deepseek-ai/dsh-client-runtime',
-  '@deepseek-ai/dsh-client-runtime/client',
-  '@deepseek-ai/dsh-client-locale',
-  '@deepseek-ai/dsh-client-locale/client',
-  '@deepseek-ai/dsh-client-ui-slots',
-  '@deepseek-ai/dsh-client-ui-sidebar',
-  '@deepseek-ai/dsh-client-ui-sidebar/client',
-  '@deepseek-ai/dsh-client-ui-settings-plugins',
-  '@deepseek-ai/dsh-client-ui-settings-plugins/client',
+  '@deepseek-ai/dsh-client-store',
 ]
 
 const host: UserConfig = {
