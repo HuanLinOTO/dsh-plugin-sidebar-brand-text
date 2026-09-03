@@ -11,12 +11,12 @@
  * @module @huanlin/dsh-plugin-sidebar-brand-text/settings
  */
 import type { Context } from '@deepseek-ai/cordis'
-import { settingsNamespace, type SettingsScope } from '@deepseek-ai/dsh-settings'
+import type { SettingsScope } from '@deepseek-ai/dsh-settings'
 import { Config } from './config.ts'
 import type { BrandTextConfig } from './types.ts'
 
 /** Settings namespace under which brand-text config persists. */
-export const SETTINGS_NAMESPACE = settingsNamespace('sidebar-brand-text')
+export const SETTINGS_NAMESPACE = 'sidebar-brand-text' as const
 
 /**
  * Mirror of the dsh-settings internal `isUnloading` guard. The cordis const

@@ -13,7 +13,7 @@
 import type { Context } from '@deepseek-ai/cordis';
 import type { BrandTextConfig } from './types.ts';
 /** Settings namespace under which brand-text config persists. */
-export declare const SETTINGS_NAMESPACE: import("@deepseek-ai/dsh-settings").SettingsNamespace;
+export declare const SETTINGS_NAMESPACE: "sidebar-brand-text";
 /** Bridge returned by {@link installBrandTextSettings}. */
 export interface BrandTextSettingsBridge {
     /** Read the current resolved config (entry source or settings layer). */

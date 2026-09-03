@@ -1,8 +1,7 @@
 /**
- * Build the host, invariant, and DSH module-loader client artifacts.
+ * Build the host and DSH module-loader client artifacts.
  *
  *   - `lib/index.js`      — node half (plain ESM, bundles src/index.ts)
- *   - `lib/invariant.js`  — node half (plain ESM, bundles src/invariant.ts)
  *   - `lib/client.js`     — browser half (CJS wrapped in DSH's
  *                            `window.__ModuleLoader__.load({id, factory})`
  *                            so the client module loader can compose it)
@@ -23,7 +22,6 @@ const HOST_EXTERNALS = [
   '@deepseek-ai/cordis',
   '@deepseek-ai/schemastery',
   '@deepseek-ai/dsh-settings',
-  '@deepseek-ai/dsh-invariants',
 ]
 
 /** DSH platform modules that stay external in the browser bundle (loader module table = PLATFORM_MODULES seed). */
@@ -37,7 +35,7 @@ const CLIENT_EXTERNALS = [
 
 const host: UserConfig = {
   name: ID,
-  entry: { index: 'src/index.ts', invariant: 'src/invariant.ts' },
+  entry: { index: 'src/index.ts' },
   outDir: 'lib',
   format: ['esm'],
   platform: 'node',
