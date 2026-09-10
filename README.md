@@ -35,7 +35,7 @@ BrandText 组件和 BrandTextCard 共享同一个 `BrandTextSettingsController`�
 
 ### 浏览器标签页标题（document.title）
 
-DSH 的 `document.title` 由 `packages/client/ui-renderer/src/client/DocumentTitle.tsx` 的 `useEffect` 写入，格式 `<会话标题> — <productTitle>`，其中 `productTitle` 是**构建期** `process.env.DSH_CLIENT_TITLE` 字面量（fallback `'DSH Local Build'`），不是 slot、不是运行时 config——`ui-brand-official/README.md` 明确记载："The browser title is independent — `DSH_CLIENT_TITLE` selects title text at build time rather than through a UI slot."
+DSH 的 `document.title` 由 `packages/client/ui-layout/src/client/DocumentTitle.tsx` 的 `useEffect` 写入，格式 `<会话标题> — <productTitle>`，其中 `productTitle` 是**构建期** `process.env.DSH_CLIENT_TITLE` 字面量（fallback `'DSH Local Build'`），不是 slot、不是运行时 config——`ui-brand-official/README.md` 明确记载："The browser title is independent — `DSH_CLIENT_TITLE` selects title text at build time rather than through a UI slot."
 
 本插件的 `titleWriter` 订阅**同一个** `sessions.list` feed 和共享的 `BrandTextSettingsController` store，在 `DocumentTitle` 的 `useEffect` 写完之后用 `queueMicrotask` 延迟覆写 `document.title` 为 `<会话标题> — <配置的品牌名>`，并用 `MutationObserver` 兜底防止 React 18 concurrent 重渲染覆盖。卸载插件后所有订阅和 observer 被清理，`DocumentTitle` 的 cleanup 恢复构建期标题。
 
@@ -69,7 +69,7 @@ DSH 的 `document.title` 由 `packages/client/ui-renderer/src/client/DocumentTit
 
 ## 开发
 
-前置：本插件适配 DSH `v0.1.2-rc.1`。alpha 版本未发 npm，`@deepseek-ai/dsh-*` 只作 peerDependencies 声明（`^0.1.2-alpha.1`，不安装）；dev 期类型用 tsconfig `paths` 指向本地 DSH 源码树（`~/.dsh/source/current`，需已 `pnpm run build`），并在 `node_modules/@deepseek-ai/` 下建 junction 指向对应包目录（同 `dsh-plugin-interpreters` 的做法）。仅 `@deepseek-ai/cordis`（`^4.0.1`）与 `@deepseek-ai/schemastery`（`^3.18.1`）已发 npm、保留在 devDependencies。
+前置：本插件适配 DSH `v0.1.5-rc.1`。`@deepseek-ai/dsh-*` 只作 peerDependencies 声明（`^0.1.5-rc.1`，不安装）；dev 期类型用 tsconfig `paths` 指向本地 DSH 源码树（需已 `pnpm run build`），并在 `node_modules/@deepseek-ai/` 下建 junction 指向对应包目录（同 `dsh-plugin-interpreters` 的做法）。仅 `@deepseek-ai/cordis`（`^4.0.1`）与 `@deepseek-ai/schemastery`（`^3.18.1`）已发 npm、保留在 devDependencies。
 
 ```sh
 pnpm install            # 安装 registry 依赖（@deepseek-ai/dsh-* peers 不拉取）
