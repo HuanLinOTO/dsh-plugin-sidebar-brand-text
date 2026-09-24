@@ -69,7 +69,7 @@ DSH 的 `document.title` 由 `packages/client/ui-layout/src/client/DocumentTitle
 
 ## 开发
 
-前置：本插件适配 DSH `v0.1.5-rc.1`。`@deepseek-ai/dsh-*` 只作 peerDependencies 声明（`^0.1.5-rc.1`，不安装）；dev 期类型用 tsconfig `paths` 指向本地 DSH 源码树（需已 `pnpm run build`），并在 `node_modules/@deepseek-ai/` 下建 junction 指向对应包目录（同 `dsh-plugin-interpreters` 的做法）。仅 `@deepseek-ai/cordis`（`^4.0.1`）与 `@deepseek-ai/schemastery`（`^3.18.1`）已发 npm、保留在 devDependencies。
+前置：本插件适配 DSH `v0.1.7-rc.1`。`@deepseek-ai/dsh-*` 只作 peerDependencies 声明（`^0.1.7-rc.1`，不安装）；dev 期类型用 tsconfig `paths` 指向本地 DSH 源码树（需已 `pnpm run build`），并在 `node_modules/@deepseek-ai/` 下建 junction 指向对应包目录（同 `dsh-plugin-interpreters` 的做法）。仅 `@deepseek-ai/cordis`（`^4.0.1`）与 `@deepseek-ai/schemastery`（`^3.18.1`）已发 npm、保留在 devDependencies。
 
 ```sh
 pnpm install            # 安装 registry 依赖（@deepseek-ai/dsh-* peers 不拉取）

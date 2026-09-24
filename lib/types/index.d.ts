@@ -16,7 +16,7 @@
  */
 import type { Context } from '@deepseek-ai/cordis';
 import { Config } from './config.ts';
-import type { BrandTextConfig } from './types.ts';
+import type { BrandTextEntryConfig } from './config.ts';
 export declare const name = "sidebar-brand-text";
 /** `webServer` is required for the HTTP gateway that backs the settings card. */
 export declare const inject: string[];
@@ -27,6 +27,6 @@ export { Config };
  * Plugin body: install the settings bridge and register the HTTP gateway.
  *
  * @param ctx - host context carrying `webServer`.
- * @param config - resolved config (seed values).
+ * @param config - the entry's volatile Cordis config.
  */
-export declare function apply(ctx: Context, config: BrandTextConfig): void;
+export declare function apply(ctx: Context, config: BrandTextEntryConfig): void;

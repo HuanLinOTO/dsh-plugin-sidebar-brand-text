@@ -9,15 +9,28 @@
  * @module @huanlin/dsh-plugin-sidebar-brand-text/config
  */
 import z from '@deepseek-ai/schemastery'
+import type { Volatile } from '@deepseek-ai/cordis'
 import type { BrandTextConfig } from './types.ts'
 
-/** Schemastery schema for the composition entry and the settings namespace. */
+/**
+ * Volatile Cordis config the loader passes to {@link apply}: each editable
+ * field is a stable reference whose `.get()` returns the latest accepted
+ * value. `Settings` enumerates these fields for the profile-owned form.
+ */
+export interface BrandTextEntryConfig {
+  name: Volatile<string>
+  revision: Volatile<string>
+}
+
+/** Schemastery schema for the composition entry (live-editable via `.volatile()`). */
 export const Config = z.object({
   name: z.string().default('DSH Local Build')
-    .description('Brand name text shown in the sidebar next to the logo.'),
+    .description('Brand name text shown in the sidebar next to the logo.')
+    .volatile(),
   revision: z.string().default('')
-    .description('Revision badge text shown beside the brand name. Empty string hides the badge.'),
-}) as unknown as z<BrandTextConfig>
+    .description('Revision badge text shown beside the brand name. Empty string hides the badge.')
+    .volatile(),
+}) as unknown as z<BrandTextEntryConfig>
 
 /**
  * Resolve a raw config object into a complete {@link BrandTextConfig}.

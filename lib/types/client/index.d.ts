@@ -2,10 +2,11 @@
  * sidebar-brand-text — browser half.
  *
  * Two registrations:
- *   - `settings.plugin.item` keyed slot (key `sidebar-brand-text`) — a card
- *     in the Plugin Config page with two text inputs (name + revision).
- *     Reads/writes through the `/sbbt/api` HTTP route via the shared
- *     `BrandTextSettingsController`.
+ *   - `plugins.row.config` keyed slot (key
+ *     `@huanlin/dsh-plugin-sidebar-brand-text#sidebar-brand-text`) — the
+ *     plugin's configuration page on the Plugins page, with two text inputs
+ *     (name + revision). Reads/writes through the `/sbbt/api` HTTP route via
+ *     the shared `BrandTextSettingsController`.
  *   - `sidebar.brand.name` single slot — renders the configured brand name
  *     text and optional revision badge. Reads from the same controller
  *     store via `useSnapshot`, so a save in the card is instantly

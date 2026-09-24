@@ -2,10 +2,11 @@
  * sidebar-brand-text — browser half.
  *
  * Two registrations:
- *   - `settings.plugin.item` keyed slot (key `sidebar-brand-text`) — a card
- *     in the Plugin Config page with two text inputs (name + revision).
- *     Reads/writes through the `/sbbt/api` HTTP route via the shared
- *     `BrandTextSettingsController`.
+ *   - `plugins.row.config` keyed slot (key
+ *     `@huanlin/dsh-plugin-sidebar-brand-text#sidebar-brand-text`) — the
+ *     plugin's configuration page on the Plugins page, with two text inputs
+ *     (name + revision). Reads/writes through the `/sbbt/api` HTTP route via
+ *     the shared `BrandTextSettingsController`.
  *   - `sidebar.brand.name` single slot — renders the configured brand name
  *     text and optional revision badge. Reads from the same controller
  *     store via `useSnapshot`, so a save in the card is instantly
@@ -24,7 +25,7 @@ import type {} from '@deepseek-ai/dsh-client-locale/client'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-ui-slots'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
-import type {} from '@deepseek-ai/dsh-client-ui-settings-plugins/client'
+import type {} from '@deepseek-ai/dsh-client-ui-plugin-manager/client'
 import { dicts } from './dictionaries.ts'
 import { BrandText, type BrandTextInjected } from './BrandText.tsx'
 import { BrandTextCard, type BrandTextCardInjected } from './BrandTextCard.tsx'
@@ -97,11 +98,14 @@ export function apply(ctx: ClientContext): void {
   )
 
   const cardInjected = (): BrandTextCardInjected => ({ controller, useSnapshot })
-  ctx.slots.inject('settings.plugin.item', function* () {
+  // rc.1: the plugin configuration page lives on the Plugins page, keyed by
+  // `<bundle package>#<row id>` (the bundle's patch declares row
+  // `sidebar-brand-text`). The rc.2 plugin-config slot is retired.
+  ctx.slots.inject('plugins.row.config', function* () {
     yield ctx.slots.register(
       {
-        name: 'settings.plugin.item',
-        key: 'sidebar-brand-text',
+        name: 'plugins.row.config',
+        key: '@huanlin/dsh-plugin-sidebar-brand-text#sidebar-brand-text',
         locale: NS,
         inject: cardInjected,
       },

@@ -16,6 +16,7 @@
  * @module @huanlin/dsh-plugin-sidebar-brand-text/gateway
  */
 import type { Context } from '@deepseek-ai/cordis'
+import type {} from '@deepseek-ai/dsh-settings'
 import { resolveConfig } from './config.ts'
 import { SETTINGS_NAMESPACE, type BrandTextSettingsBridge } from './settings.ts'
 import type { BrandTextConfig } from './types.ts'
@@ -35,7 +36,7 @@ interface WebServerLike {
   }): () => void
 }
 
-/** Minimal type for the settings service (duck-typed from SettingsProvider). */
+/** Minimal type for the settings service (duck-typed from the settings face). */
 interface SettingsLike {
   update(ns: unknown, patch: object): Promise<void>
 }

@@ -9,9 +9,19 @@
  * @module @huanlin/dsh-plugin-sidebar-brand-text/config
  */
 import z from '@deepseek-ai/schemastery';
+import type { Volatile } from '@deepseek-ai/cordis';
 import type { BrandTextConfig } from './types.ts';
-/** Schemastery schema for the composition entry and the settings namespace. */
-export declare const Config: z<BrandTextConfig>;
+/**
+ * Volatile Cordis config the loader passes to {@link apply}: each editable
+ * field is a stable reference whose `.get()` returns the latest accepted
+ * value. `Settings` enumerates these fields for the profile-owned form.
+ */
+export interface BrandTextEntryConfig {
+    name: Volatile<string>;
+    revision: Volatile<string>;
+}
+/** Schemastery schema for the composition entry (live-editable via `.volatile()`). */
+export declare const Config: z<BrandTextEntryConfig>;
 /**
  * Resolve a raw config object into a complete {@link BrandTextConfig}.
  *

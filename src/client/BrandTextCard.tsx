@@ -1,20 +1,21 @@
 /**
- * BrandTextCard — the `settings.plugin.item` slot occupant.
+ * BrandTextCard — the `plugins.row.config` slot occupant.
  *
  * An expandable card (mirrors the ego-browser `EgoBrowserCard` pattern)
  * with two text inputs: brand name and revision badge. Reads/writes
  * through the shared `BrandTextSettingsController` which uses
  * `fetch('/sbbt/api/get')` and `fetch('/sbbt/api/set')`.
  *
- * Registered under the `settings.plugin.item` keyed slot with
- * `key: 'sidebar-brand-text'` — appears in the Plugin Config page
- * alongside the built-in cards.
+ * Registered under the `plugins.row.config` keyed slot with
+ * `key: '@huanlin/dsh-plugin-sidebar-brand-text#sidebar-brand-text'` — the
+ * plugin's configuration page on the Plugins page.
  *
  * @module @huanlin/dsh-plugin-sidebar-brand-text/client/BrandTextCard
  */
 import type { CSSProperties } from 'react'
-import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
+import type { PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import type { SnapshotSelectorHook } from '@deepseek-ai/dsh-client-ui-slots'
+import type {} from '@deepseek-ai/dsh-client-ui-plugin-manager/client'
 import type { BrandTextState } from './controller.ts'
 
 /** Inject face: controller + selector hook. */
@@ -29,8 +30,11 @@ export interface BrandTextCardInjected {
   readonly useSnapshot: SnapshotSelectorHook<BrandTextState>
 }
 
-/** Full props: locale seat + inject. */
-export type BrandTextCardProps = PropsLocale<'dsh-plugin-sidebar-brand-text'> & BrandTextCardInjected
+/** Full props: the `plugins.row.config` owner share (view + form), locale seat, and inject. */
+export type BrandTextCardProps =
+  PropsRuntime<'plugins.row.config'>
+  & PropsLocale<'dsh-plugin-sidebar-brand-text'>
+  & BrandTextCardInjected
 
 const cardStyle: CSSProperties = {
   border: '1px solid var(--dsw-alias-border-l2, rgba(128,128,128,0.22))',
@@ -195,9 +199,13 @@ const CHEVRON_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"
  * @param props - locale + controller/useSnapshot inject.
  * @returns a `<li>` card element.
  */
-export function BrandTextCard({ t, controller, useSnapshot }: BrandTextCardProps) {
+export function BrandTextCard({ view, t, controller, useSnapshot }: BrandTextCardProps) {
   const state = useSnapshot((s) => s)
   if (state.status === 'idle') void controller.load()
+
+  // The row's detail page uses `summary` only when the package description is
+  // absent; render the one-liner there and the interactive form otherwise.
+  if (view === 'summary') return t('card.intro')
 
   const degraded = state.status === 'ready' && !state.available
   const open = state._open || degraded

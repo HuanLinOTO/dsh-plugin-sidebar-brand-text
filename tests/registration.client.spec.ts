@@ -75,11 +75,11 @@ describe('client apply', () => {
     document.head.innerHTML = ''
   })
 
-  it('injects into sidebar.brand.name and settings.plugin.item slots', () => {
+  it('injects into sidebar.brand.name and plugins.row.config slots', () => {
     const { ctx, injectCalls } = stubCtx()
     apply(ctx as unknown as ClientContext)
 
-    expect(injectCalls.map(c => c.name)).toEqual(['sidebar.brand.name', 'settings.plugin.item'])
+    expect(injectCalls.map(c => c.name)).toEqual(['sidebar.brand.name', 'plugins.row.config'])
   })
 
   it('registers BrandText under sidebar.brand.name with useSnapshot inject', () => {
@@ -93,14 +93,14 @@ describe('client apply', () => {
     expect(injectFace.useSnapshot).toBeDefined()
   })
 
-  it('registers BrandTextCard under settings.plugin.item with key sidebar-brand-text', () => {
+  it('registers BrandTextCard under plugins.row.config with the bundle#row key', () => {
     const { ctx, registrations, injectCalls } = stubCtx()
     apply(ctx as unknown as ClientContext)
 
     for (const call of injectCalls) drainFactory(call.factory)
-    const cardReg = registrations.find(r => r.name === 'settings.plugin.item')
+    const cardReg = registrations.find(r => r.name === 'plugins.row.config')
     expect(cardReg).toBeDefined()
-    expect(cardReg!.key).toBe('sidebar-brand-text')
+    expect(cardReg!.key).toBe('@huanlin/dsh-plugin-sidebar-brand-text#sidebar-brand-text')
     expect(cardReg!.locale).toBe('dsh-plugin-sidebar-brand-text')
   })
 
@@ -109,7 +109,7 @@ describe('client apply', () => {
     apply(ctx as unknown as ClientContext)
 
     for (const call of injectCalls) drainFactory(call.factory)
-    const cardReg = registrations.find(r => r.name === 'settings.plugin.item')
+    const cardReg = registrations.find(r => r.name === 'plugins.row.config')
     const injectFace = cardReg!.inject() as { controller: unknown, useSnapshot: unknown }
     expect(injectFace.controller).toBeDefined()
     expect(injectFace.useSnapshot).toBeDefined()

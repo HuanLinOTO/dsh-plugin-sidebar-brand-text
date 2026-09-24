@@ -4,7 +4,7 @@
  *
  * Loads the config from the host's `/sbbt/api/get` route, stages edits,
  * and saves via `/sbbt/api/set`. The `sidebar.brand.name` slot occupant
- * and the `settings.plugin.item` card both read from the same store via
+ * and the `plugins.row.config` card both read from the same store via
  * `bindSnapshotSelector`, so a save is instantly reflected in the sidebar
  * without a DOM event or page reload.
  *
@@ -50,7 +50,7 @@ function initialState(): BrandTextState {
  * Controller managing the brand-text config lifecycle.
  *
  * Constructed once in the client `apply()` and shared between the
- * `sidebar.brand.name` slot and the `settings.plugin.item` card.
+ * `sidebar.brand.name` slot and the `plugins.row.config` card.
  */
 export class BrandTextSettingsController {
   readonly store: SnapshotStore<BrandTextState>

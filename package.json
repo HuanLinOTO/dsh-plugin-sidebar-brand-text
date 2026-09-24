@@ -1,6 +1,6 @@
 {
   "name": "@huanlin/dsh-plugin-sidebar-brand-text",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "publishConfig": {
     "access": "public"
   },
@@ -37,8 +37,8 @@
         "@deepseek-ai/dsh-api-session-controller",
         "@deepseek-ai/dsh-client-locale",
         "@deepseek-ai/dsh-client-store",
+        "@deepseek-ai/dsh-client-ui-plugin-manager",
         "@deepseek-ai/dsh-client-ui-renderer",
-        "@deepseek-ai/dsh-client-ui-settings-plugins",
         "@deepseek-ai/dsh-client-ui-sidebar",
         "@deepseek-ai/dsh-client-ui-slots"
       ],
@@ -53,15 +53,15 @@
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-api-session-controller": "^0.1.5-rc.1",
-    "@deepseek-ai/dsh-client-locale": "^0.1.5-rc.1",
-    "@deepseek-ai/dsh-client-store": "^0.1.5-rc.1",
-    "@deepseek-ai/dsh-client-ui-renderer": "^0.1.5-rc.1",
-    "@deepseek-ai/dsh-client-ui-settings-plugins": "^0.1.5-rc.1",
-    "@deepseek-ai/dsh-client-ui-sidebar": "^0.1.5-rc.1",
-    "@deepseek-ai/dsh-client-ui-slots": "^0.1.5-rc.1",
-    "@deepseek-ai/dsh-settings": "^0.1.5-rc.1",
-    "@deepseek-ai/schemastery": "^3.18.1",
+    "@deepseek-ai/dsh-api-session-controller": "^0.1.7-rc.1",
+    "@deepseek-ai/dsh-client-locale": "^0.1.7-rc.1",
+    "@deepseek-ai/dsh-client-store": "^0.1.7-rc.1",
+    "@deepseek-ai/dsh-client-ui-plugin-manager": "^0.1.7-rc.1",
+    "@deepseek-ai/dsh-client-ui-renderer": "^0.1.7-rc.1",
+    "@deepseek-ai/dsh-client-ui-sidebar": "^0.1.7-rc.1",
+    "@deepseek-ai/dsh-client-ui-slots": "^0.1.7-rc.1",
+    "@deepseek-ai/dsh-settings": "^0.1.7-rc.1",
+    "@deepseek-ai/schemastery": "^3.18.4",
     "react": "^18.2.0"
   },
   "peerDependenciesMeta": {
@@ -77,10 +77,10 @@
     "@deepseek-ai/dsh-client-store": {
       "optional": true
     },
-    "@deepseek-ai/dsh-client-ui-renderer": {
+    "@deepseek-ai/dsh-client-ui-plugin-manager": {
       "optional": true
     },
-    "@deepseek-ai/dsh-client-ui-settings-plugins": {
+    "@deepseek-ai/dsh-client-ui-renderer": {
       "optional": true
     },
     "@deepseek-ai/dsh-client-ui-sidebar": {
@@ -101,13 +101,12 @@
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/schemastery": "^3.18.1",
+    "@deepseek-ai/schemastery": "^3.18.4",
     "@types/node": "^22.20.1",
     "@types/react": "~18.3.31",
     "jsdom": "^26.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "schemastery": "^3.18.0",
     "tsdown": "^0.15.0",
     "typescript": "^5.9.0",
     "vitest": "^3.2.0"

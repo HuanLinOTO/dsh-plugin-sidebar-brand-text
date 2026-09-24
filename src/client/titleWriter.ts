@@ -26,9 +26,14 @@ import { DEFAULT_BRAND_TEXT_CONFIG } from '../types.ts'
 import type { BrandTextState } from './controller.ts'
 import type { SnapshotStore } from '@deepseek-ai/dsh-client-store'
 
-/** Minimal face of `sessions.list` we depend on (ISessions.list slice). */
+/** Minimal face of `sessions.list` we depend on.
+ *
+ * rc.1's `ISessions.list` snapshot (`SessionListState`) carries `byId` only:
+ * the selected-session id moved out of the sessions domain. `current` is kept
+ * optional so the writer still accepts the rc.1 snapshot; when it is absent the
+ * title falls back to the brand name alone. */
 interface SessionListSnapshot {
-  current: string | undefined
+  current?: string | undefined
   byId: Record<string, { title?: string } | undefined>
 }
 
