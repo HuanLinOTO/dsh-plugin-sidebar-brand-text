@@ -4,7 +4,7 @@
 
 # dsh-plugin-sidebar-brand-text
 
-替换侧边栏左上角的品牌名、构建徽标文案，以及浏览器标签页标题（`document.title`）。默认情况下，DSH 侧边栏在左上角显示 `DSH Local Build` 文字和 7 位 commit hash 徽标（构建期 `DSH_CLIENT_COMMIT_HASH`），浏览器标签页标题格式为 `<会话标题> — DSH Local Build`；本插件通过注册 `sidebar.brand.name` slot 占位者替换侧边栏文案，并订阅 `sessions.list` 覆写 `document.title` 让浏览器标签页也使用配置的品牌名，同时在 WebUI 设置 → 插件配置页提供一张可展开的配置卡。
+替换侧边栏左上角的品牌名、构建徽标文案，以及浏览器标签页标题（`document.title`）。默认情况下，DSH 侧边栏在左上角显示 `DSH Local Build` 文字和 7 位 commit hash 徽标（构建期 `DSH_CLIENT_COMMIT_HASH`），浏览器标签页标题格式为 `<会话标题> — DSH Local Build`；本插件通过注册 `sidebar.brand.name` slot 占位者替换侧边栏文案，并订阅 `sessions.list` 覆写 `document.title` 让浏览器标签页也使用配置的品牌名，同时在 WebUI Plugins 页本插件独享的行详情页提供配置表单（恒展开）。
 
 ```
 替换前：                              替换后（name="My Build", revision="v1.0"）：
@@ -43,7 +43,7 @@ DSH 的 `document.title` 由 `packages/client/ui-layout/src/client/DocumentTitle
 
 ### WebUI 插件配置页（推荐）
 
-安装插件后，在 DSH WebUI 的设置 → 插件配置页里会出现「侧边栏品牌文案」卡片，展开后含两个输入框：
+安装插件后，在 DSH WebUI 的 Plugins 页打开本插件独享的行详情页，「侧边栏品牌文案」配置卡即页面内容（编辑体恒展开，无卡片级折叠），含两个输入框：
 
 | 字段 | 说明 |
 |------|------|

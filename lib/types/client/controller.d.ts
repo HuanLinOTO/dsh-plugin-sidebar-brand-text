@@ -8,8 +8,6 @@
  * `bindSnapshotSelector`, so a save is instantly reflected in the sidebar
  * without a DOM event or page reload.
  *
- * Mirrors the ego-browser `EgoBrowserSettingsController` pattern.
- *
  * @module @huanlin/dsh-plugin-sidebar-brand-text/client/controller
  */
 import { type SnapshotStore } from '@deepseek-ai/dsh-client-store';
@@ -37,8 +35,6 @@ export interface BrandTextState {
         kind: 'error';
         message: string;
     };
-    /** Card expand state (toggled by the card header button). */
-    _open: boolean;
 }
 /**
  * Controller managing the brand-text config lifecycle.
@@ -59,8 +55,6 @@ export declare class BrandTextSettingsController {
     discard(): void;
     /** Save the staged draft via `/sbbt/api/set`. */
     save(): Promise<void>;
-    /** Toggle the card's expand state (mirrors ego-browser `controller.toggle()`). */
-    toggle(): void;
     /** Mark the store as unavailable (route unreachable or settings service absent). */
     private markUnavailable;
 }

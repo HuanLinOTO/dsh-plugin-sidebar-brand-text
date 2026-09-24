@@ -1,10 +1,13 @@
 /**
  * BrandTextCard — the `plugins.row.config` slot occupant.
  *
- * An expandable card (mirrors the ego-browser `EgoBrowserCard` pattern)
- * with two text inputs: brand name and revision badge. Reads/writes
- * through the shared `BrandTextSettingsController` which uses
- * `fetch('/sbbt/api/get')` and `fetch('/sbbt/api/set')`.
+ * Since 0.1.7 this slot renders on the plugin's own row detail page of
+ * the Plugins page: the page draws its own title, icon, and breadcrumb,
+ * and the card is the page's sole content. The editor is therefore
+ * rendered flat — no card-level disclosure chrome — with two text
+ * inputs: brand name and revision badge. Reads/writes through the
+ * shared `BrandTextSettingsController` which uses `fetch('/sbbt/api/get')`
+ * and `fetch('/sbbt/api/set')`.
  *
  * Registered under the `plugins.row.config` keyed slot with
  * `key: '@huanlin/dsh-plugin-sidebar-brand-text#sidebar-brand-text'` — the
@@ -25,7 +28,6 @@ export interface BrandTextCardInjected {
     readonly edit: (field: 'name' | 'revision', value: string) => void
     readonly discard: () => void
     readonly save: () => Promise<void>
-    readonly toggle: () => void
   }
   readonly useSnapshot: SnapshotSelectorHook<BrandTextState>
 }
@@ -44,43 +46,6 @@ const cardStyle: CSSProperties = {
   transition: 'border-color .16s, background .16s',
 }
 
-const headerStyle: CSSProperties = {
-  appearance: 'none',
-  width: '100%',
-  font: 'inherit',
-  color: 'inherit',
-  textAlign: 'left',
-  cursor: 'pointer',
-  background: 'transparent',
-  border: 0,
-  borderRadius: 12,
-  alignItems: 'center',
-  gap: 12,
-  padding: '14px 16px',
-  display: 'flex',
-}
-
-const headTextStyle: CSSProperties = {
-  flexDirection: 'column',
-  flex: 1,
-  gap: 4,
-  minWidth: 0,
-  display: 'flex',
-}
-
-const nameStyle: CSSProperties = {
-  color: 'var(--dsw-alias-label-primary, inherit)',
-  fontSize: 15,
-  fontWeight: 600,
-  lineHeight: 1.4,
-}
-
-const descStyle: CSSProperties = {
-  color: 'var(--dsw-alias-label-tertiary, rgba(128,128,128,0.7))',
-  fontSize: 13,
-  lineHeight: 1.5,
-}
-
 const pendingStyle: CSSProperties = {
   whiteSpace: 'nowrap',
   background: 'var(--dsw-alias-bg-module-platform, rgba(128,128,128,0.12))',
@@ -93,19 +58,8 @@ const pendingStyle: CSSProperties = {
   lineHeight: '17px',
 }
 
-const chevronStyle = (open: boolean): CSSProperties => ({
-  color: 'var(--dsw-alias-label-tertiary, inherit)',
-  flex: 'none',
-  transition: 'transform .16s',
-  display: 'inline-flex',
-  alignItems: 'center',
-  transform: open ? 'rotate(180deg)' : 'none',
-})
-
 const bodyStyle: CSSProperties = {
-  borderTop: '1px solid var(--dsw-alias-border-l2, rgba(128,128,128,0.22))',
-  margin: '0 16px',
-  padding: '12px 0 4px',
+  padding: '16px',
 }
 
 const formStyle: CSSProperties = {
@@ -192,12 +146,10 @@ const errorStyle: CSSProperties = {
   minWidth: 0,
 }
 
-const CHEVRON_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
-
 /**
- * Render the sidebar-brand-text settings card.
+ * Render the sidebar-brand-text settings editor.
  * @param props - locale + controller/useSnapshot inject.
- * @returns a `<li>` card element.
+ * @returns a `<li>` card element with the always-expanded editor body.
  */
 export function BrandTextCard({ view, t, controller, useSnapshot }: BrandTextCardProps) {
   const state = useSnapshot((s) => s)
@@ -207,33 +159,17 @@ export function BrandTextCard({ view, t, controller, useSnapshot }: BrandTextCar
   // absent; render the one-liner there and the interactive form otherwise.
   if (view === 'summary') return t('card.intro')
 
-  const degraded = state.status === 'ready' && !state.available
-  const open = state._open || degraded
   const applyState = state.applyState ?? { kind: 'idle' }
   const saving = applyState.kind === 'saving'
   const saved = applyState.kind === 'saved'
   const errorText = applyState.kind === 'error' ? applyState.message : undefined
   const busy = !state.writable || saving
 
-  const header = (
-    <button
-      type="button"
-      style={headerStyle}
-      aria-expanded={open}
-      aria-label={t('card.title')}
-      onClick={() => { if (!degraded) controller.toggle() }}
-    >
-      <span style={headTextStyle}>
-        <span style={nameStyle}>{t('card.title')}</span>
-        <span style={descStyle}>{t('card.intro')}</span>
-      </span>
-      {state.dirty ? <span style={pendingStyle}>{t('card.unsaved')}</span> : null}
-      <span style={chevronStyle(open)} dangerouslySetInnerHTML={{ __html: CHEVRON_SVG }} />
-    </button>
-  )
-
+  // The editor is always expanded on the row detail page. While the first
+  // load is still in flight (`idle`/`loading`) the card stays empty; once
+  // `ready`, render the unavailable branch or the form.
   let body: React.ReactNode = null
-  if (open) {
+  if (state.status === 'ready') {
     if (!state.available) {
       body = (
         <div style={bodyStyle}>
@@ -283,6 +219,7 @@ export function BrandTextCard({ view, t, controller, useSnapshot }: BrandTextCar
             </div>
           </div>
           <div style={footerStyle}>
+            {state.dirty ? <span style={{ ...pendingStyle, marginRight: 'auto' }}>{t('card.unsaved')}</span> : null}
             <button
               type="button"
               style={{ ...btnBase, opacity: (!state.dirty || saving) ? 0.5 : 1 }}
@@ -312,8 +249,7 @@ export function BrandTextCard({ view, t, controller, useSnapshot }: BrandTextCar
 
   return (
     <li style={cardStyle}>
-      {header}
-      {open ? body : null}
+      {body}
     </li>
   )
 }
