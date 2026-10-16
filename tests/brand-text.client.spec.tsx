@@ -4,12 +4,17 @@ import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, describe, expect, it, beforeEach } from 'vitest'
 import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-store'
-import { BrandText } from '../src/client/BrandText.tsx'
+import { BrandText, type BrandTextProps } from '../src/client/BrandText.tsx'
 import type { BrandTextState } from '../src/client/controller.ts'
 import { DEFAULT_BRAND_TEXT_CONFIG } from '../src/types.ts'
 import { bindSnapshotSelector } from '../src/client/bindSnapshotSelector.ts'
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
+
+/** Stand-in for the GlobalStandardProps member the slot system merges in at
+ * render time (`usePanelInfo`, merged by ui-layout): BrandText never calls it,
+ * but the composed props type requires it since dsh 0.2.0-rc.2. */
+const stubUsePanelInfo: BrandTextProps['usePanelInfo'] = () => undefined as never
 
 function makeStore(overrides: Partial<BrandTextState> = {}): SnapshotStore<BrandTextState> {
   return createSnapshotStore<BrandTextState>({
@@ -29,7 +34,7 @@ function render(store: SnapshotStore<BrandTextState>): { container: HTMLDivEleme
   const root = createRoot(container)
   const useSnapshot = bindSnapshotSelector(store)
   act(() => {
-    root.render(<BrandText useSnapshot={useSnapshot} />)
+    root.render(<BrandText useSnapshot={useSnapshot} usePanelInfo={stubUsePanelInfo} />)
   })
   return { container, root }
 }

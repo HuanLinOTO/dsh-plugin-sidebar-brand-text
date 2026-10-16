@@ -69,11 +69,11 @@ DSH 的 `document.title` 由 `packages/client/ui-layout/src/client/DocumentTitle
 
 ## 开发
 
-前置：本插件适配 DSH `v0.1.7-rc.1`。`@deepseek-ai/dsh-*` 只作 peerDependencies 声明（`^0.1.7-rc.1`，不安装）；dev 期类型用 tsconfig `paths` 指向本地 DSH 源码树（需已 `pnpm run build`），并在 `node_modules/@deepseek-ai/` 下建 junction 指向对应包目录（同 `dsh-plugin-interpreters` 的做法）。仅 `@deepseek-ai/cordis`（`^4.0.1`）与 `@deepseek-ai/schemastery`（`^3.18.1`）已发 npm、保留在 devDependencies。
+前置：本插件适配 DSH `v0.2.1-alpha.5`。`@deepseek-ai/dsh-*` 只作 peerDependencies 声明（`^0.2.1-alpha.5`，不安装）；vendored peers 随宿主镜像官方 pin（`@deepseek-ai/cordis` `~4.0.5-alpha.2`、`@deepseek-ai/schemastery` `~3.18.5-alpha.2`）。dev 期类型用 tsconfig `paths` 指向本地 DSH 源码树（需已 `pnpm run build`），并在 `node_modules/@deepseek-ai/` 下建 junction（绝对路径目标）指向对应包目录（vendored 包在 `dsh/vendor/`，workspace 包按 `package.json` name 定位）。
 
 ```sh
 pnpm install            # 安装 registry 依赖（@deepseek-ai/dsh-* peers 不拉取）
-pnpm run typecheck      # tsc --noEmit（类型经 tsconfig paths 解析到 DSH 源码树）
+pnpm run typecheck      # tsc --noEmit：src（tsconfig.json）+ tests（tsconfig.tests.json），类型经 tsconfig paths 解析到 DSH 源码树
 pnpm test               # vitest：注册形态 + 控制器 + 组件渲染（dsh-client-store 用本地测试替身）
 pnpm run build          # tsdown + tsc → lib/index.js、lib/client.js、lib/types/
 ```

@@ -1,7 +1,5 @@
 /** Test double for @deepseek-ai/dsh-client-store (see vitest.config.ts alias).
  *  Provides createSnapshotStore + types used by the controller. */
-import { vi } from 'vitest'
-
 export interface ObservableSnapshot<T> {
   getSnapshot(): T
   subscribe(fn: () => void): () => void

@@ -86,7 +86,7 @@ describe('BrandTextSettingsController', () => {
   })
 
   it('save sends patch and updates store on success', async () => {
-    const fetchFn = vi.fn(async (_url: string, init?: RequestInit) =>
+    const fetchFn = vi.fn(async (_url: string, _init?: RequestInit) =>
       new Response(JSON.stringify({
         ok: true,
         value: { config: { name: 'Saved', revision: 'v2.0' } },

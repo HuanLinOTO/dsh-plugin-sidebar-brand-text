@@ -14,7 +14,7 @@ interface StubCtx {
   ctx: {
     effect: (fn: () => unknown, _reason: string) => void
     locale: {
-      register: (ns: string, dict: unknown) => void
+      register: (ns: string, dict: Record<string, string>) => void
       bind: (ns: string) => (key: string) => string
     }
     slots: {
